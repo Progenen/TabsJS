@@ -1,8 +1,10 @@
-export default class Tabs {
-    constructor(tabTitle, tabParent, tabItem, itemsActivated, classItemActivated) {
+
+class Tabs {
+    constructor(tabTitle, tabParent, tabItem, tabIsReset, itemsActivated, classItemActivated) {
         this.tabTitle = tabTitle;
         this.tabParent = tabParent;
         this.tabItem = tabItem;
+        this.tabIsReset = tabIsReset;
         this.itemsActivated = itemsActivated;
         this.classItemActivated = classItemActivated;
     }
@@ -52,21 +54,45 @@ export default class Tabs {
         const itemsActivated = document.querySelectorAll(this.itemsActivated);
         if (tabTitle && tabParent && tabItem) {
             this.resetTabs();
-
             tabParent.addEventListener('click', (e) => {
                 for (let i = 0; i < tabTitle.length; i++) {
                     if (e.target === tabTitle[i]) {
-                        this.resetTabs();
+                        if (this.tabIsReset) {
+                            this.resetTabs();
+                        }
                         tabItem.forEach(element => {
                             if (e.target.getAttribute('data-tab') === element.getAttribute('data-tab')) {
-                                e.target.classList.add('tabs-active');
-                                element.classList.add('tabs-show');
-                                element.classList.remove('tabs-hide');
-                                itemsActivated.forEach(item => {
-                                    if (item.getAttribute('data-tab') === e.target.getAttribute('data-tab')) {
-                                        item.classList.add(this.classItemActivated);
+                                if (!(this.tabIsReset)) {
+                                    if (!(e.target.classList.contains('tabs-active'))) {
+                                        e.target.classList.add('tabs-active');
+                                        element.classList.add('tabs-show');
+                                        element.classList.remove('tabs-hide');
+                                        itemsActivated.forEach(item => {
+                                            if (item.getAttribute('data-tab') === e.target.getAttribute('data-tab')) {
+                                                item.classList.add(this.classItemActivated);
+                                            }
+                                        });
+                                    } else {
+                                        e.target.classList.remove('tabs-active');
+                                        element.classList.remove('tabs-show');
+                                        element.classList.add('tabs-hide');
+                                        itemsActivated.forEach(item => {
+                                            if (item.getAttribute('data-tab') === e.target.getAttribute('data-tab')) {
+                                                item.classList.remove(this.classItemActivated);
+                                            }
+                                        });
                                     }
-                                });
+                                } else {
+
+                                    e.target.classList.add('tabs-active');
+                                    element.classList.add('tabs-show');
+                                    element.classList.remove('tabs-hide');
+                                    itemsActivated.forEach(item => {
+                                        if (item.getAttribute('data-tab') === e.target.getAttribute('data-tab')) {
+                                            item.classList.add(this.classItemActivated);
+                                        }
+                                    });
+                                }
                             }
                         })
                     }
@@ -88,7 +114,7 @@ export default class Tabs {
     с которым он находится в группе (для доп.активационного элемента необязательно нахождение в общем родителе с контентом
     или активатором таба). Класс который будет добавлятся к доп.актив.элементу нужно указать
     4. Метод activeTab активирует указанный вами таб, таб указывается по значению data-set атрибута
-
+ 
     Структура:
-    new Tabs('Активатор', 'Родитель', 'Контент', 'Доп.активационный элемент', 'Класс активации для доп.активационношо элемента');
+    new Tabs('Активатор', 'Родитель', 'Контент', 'сменить режим', 'Доп.активационный элемент', 'Класс активации для доп.активационношо элемента');
 */
